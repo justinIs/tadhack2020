@@ -22,7 +22,7 @@ const loadConfig = () => {
             }
         }
     }
-    config.SUBSCRIPTION_PARAMS.deliveryMode.address = process.env.NGROK_URL
+    config.SUBSCRIPTION_PARAMS.deliveryMode.address = process.env.WEBHOOK_URL
 }
 
 /**

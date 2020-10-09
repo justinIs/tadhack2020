@@ -6,7 +6,7 @@ Configure `.enf` file as follows:
 
 ```.env
 # Misc
-NGROK_URL='https://76d473358193.ngrok.io/webhook'
+WEBHOOK_URL='https://xxx.ngrok.io/webhook'
 
 RECIPIENT_PHONE='E164 format of phone number to be used to receive calls'
 
@@ -19,7 +19,7 @@ RINGCENTRAL_PASSWORD=''
 RINGCENTRAL_EXTENSION='101'
 
 # Avaya
-AVAYA_USERNAME='E164 format Avaya phone number
+AVAYA_USERNAME='E164 format Avaya phone number'
 AVAYA_SID=''
 AVAYA_AUTH_TOKEN=''
 
