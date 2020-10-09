@@ -1,10 +1,11 @@
-const {sdk, SpeakerEvent} = require("symbl-node");
+const {sdk} = require("symbl-node");
+const logger = require('./server/util/logger').createLogger('symbl')
 
 const subscribeToConnection = (sdk, connectionId) => {
     sdk.subscribeToConnection(connectionId, data => {
-        console.log('Subscription received data: ', JSON.stringify(data))
+        logger.log('Subscription received data: ', JSON.stringify(data))
 
-        const { type } = data;
+        const {type} = data;
         switch (type) {
             case 'transcript_response': {
                 const {payload} = data;
@@ -30,8 +31,10 @@ const subscribeToConnection = (sdk, connectionId) => {
                 });
                 break;
             }
-            default:
-                console.log('idk what to do')
+            default: {
+                logger.log('idk what to do')
+                break;
+            }
         }
     })
 }
@@ -44,19 +47,19 @@ const createConnection = async (sdk) => {
                 phoneNumber: process.env.RECIPIENT_PHONE
             }
         })
-        const { connectionId } = connection
-        console.log('Successfully connected. Connection Id: ', connectionId);
+        const {connectionId} = connection
+        logger.log('Successfully connected. Connection Id: ', connectionId);
 
         subscribeToConnection(sdk, connectionId)
 
         // Stop call after 60 seconds to automatically.
         setTimeout(async () => {
-            const connection = await sdk.stopEndpoint({ connectionId });
-            console.log('Stopped the connection');
-            console.log('Conversation ID:', connection.conversationId);
+            const connection = await sdk.stopEndpoint({connectionId});
+            logger.log('Stopped the connection');
+            logger.log('Conversation ID:', connection.conversationId);
         }, 60000);
     } catch (e) {
-        console.error('Could not start endpoint')
+        logger.error('Could not start endpoint')
     }
 }
 
@@ -68,7 +71,7 @@ const createConnection = async (sdk) => {
         "appSecret": process.env.SYMBL_APP_SECRET
     })
 
-    console.log('SDK initialized')
+    logger.log('SDK initialized')
 
     await createConnection(sdk)
 })()
