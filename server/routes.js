@@ -51,7 +51,7 @@ routes.push({
         debugLogRequest(request, request.payload)
 
         if (request.payload.CallStatus === 'in-progress' && request.payload.CallDuration === '0') {
-            return avayaController.joinConferenceForSymbl()
+            return avayaController.startConferenceCall()
         }
         return 'OK'
     }
@@ -74,6 +74,12 @@ routes.push({
     handler: (request, h) => {
         logger.info('POST /avaya/webhook/conference')
         debugLogRequest(request, request.payload)
+
+        if (request.payload && request.payload.ConferenceAction === 'enter' &&
+            request.payload.ConferenceParticipantCount === '1') {
+            logger.debug('Received enter conference event for user, adding symbl AI to call')
+            avayaController.joinSymblToConference()
+        }
 
         return 'OK'
     }

@@ -1,4 +1,5 @@
 const config = require('../util/config')
+const symblService = require('../services/symblService')
 const cpaas = require('@avaya/cpaas')
 const ix = cpaas.inboundXml
 const enums = cpaas.enums
@@ -24,7 +25,7 @@ const answerWithSampleText = async () => {
     }
 }
 
-const joinConferenceForSymbl = async () => {
+const startConferenceCall = async () => {
     const xmlDefinition = ix.response({
         content: [
             ix.say({
@@ -49,11 +50,16 @@ const joinConferenceForSymbl = async () => {
     try {
         return await ix.build(xmlDefinition)
     } catch (e) {
-        logger.error('Unable to build XML for joinConferenceForSymbl')
+        logger.error('Unable to build XML for startConferenceCall')
     }
+}
+
+const joinSymblToConference = async () => {
+    await symblService.connectToPstn(process.env.AVAYA_USERNAME)
 }
 
 module.exports = {
     answerWithSampleText,
-    joinConferenceForSymbl
+    startConferenceCall,
+    joinSymblToConference
 }

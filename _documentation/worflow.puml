@@ -1,0 +1,11 @@
+@startuml
+
+actor User
+participant Avaya
+participant Server
+participant Symbl
+
+User -> Avaya : places call
+Avaya -> User : answer call, play prompt
+
+@enduml

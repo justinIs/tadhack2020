@@ -63,15 +63,56 @@ const createConnection = async (sdk) => {
     }
 }
 
-(async () => {
-    require('dotenv').config()
+const initSdk = async () => await sdk.init({
+    "appId": process.env.SYMBL_APP_ID,
+    "appSecret": process.env.SYMBL_APP_SECRET
+})
 
-    await sdk.init({
-        "appId": process.env.SYMBL_APP_ID,
-        "appSecret": process.env.SYMBL_APP_SECRET
-    })
+const createPstnConnection = async (phoneNumber) => {
+    let connectionId
+    try {
+        const connection = await sdk.startEndpoint({
+            endpoint: {
+                type: 'pstn',
+                phoneNumber
+            }
+        })
 
-    logger.log('SDK initialized')
+        connectionId = connection.connectionId
+        logger.log('Successfully connected. Connection Id: ', connectionId);
 
-    await createConnection(sdk)
-})()
+        subscribeToConnection(sdk, connectionId)
+
+        // Stop call after 30 seconds to automatically.
+        setTimeout(async () => {
+            const connection = await sdk.stopEndpoint({connectionId});
+            logger.log('Stopped the connection');
+            logger.log('Conversation ID:', connection.conversationId);
+        }, 30000);
+    } catch (e) {
+        logger.error('Could not start PSTN endpoint connection', e)
+        throw new Error(e.message)
+    }
+
+    return connectionId
+}
+
+module.exports = {
+    initSdk,
+    createPstnConnection
+}
+
+if (require.main === module) {
+    (async () => {
+        require('dotenv').config()
+
+        await sdk.init({
+            "appId": process.env.SYMBL_APP_ID,
+            "appSecret": process.env.SYMBL_APP_SECRET
+        })
+
+        logger.log('SDK initialized')
+
+        await createConnection(sdk)
+    })()
+}
