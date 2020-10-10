@@ -186,10 +186,12 @@ const getConversationTranscript = (conversationId) => {
             console.log('Bodyy', body);
 
             let transcript = '';
-            body.messages.forEach(message => {
-                transcript += ' ';
-                transcript += message.text;
-            });
+            if (body.messages) {
+                body.messages.forEach(message => {
+                    transcript += ' ';
+                    transcript += message.text;
+                });
+            }
             resolve(transcript);
         });
     });
