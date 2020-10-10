@@ -58,8 +58,13 @@ const joinSymblToConference = async () => {
     await symblService.connectToPstn(process.env.AVAYA_USERNAME)
 }
 
+const placeOutboundSymblCall = async (phoneNumber) => {
+    await symblService.connectToPstn(phoneNumber)
+}
+
 module.exports = {
     answerWithSampleText,
     startConferenceCall,
-    joinSymblToConference
+    joinSymblToConference,
+    placeOutboundSymblCall
 }

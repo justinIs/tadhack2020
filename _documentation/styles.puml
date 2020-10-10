@@ -1,0 +1,23 @@
+!include https://raw.githubusercontent.com/bschwarz/puml-themes/master/themes/cyborg/puml-theme-cyborg.puml
+skinparam {
+    backgroundColor #c3c3c3
+    defaultFontSize   14
+    RoundCorner 5
+    ArrowColor black
+}
+
+skinparam Sequence {
+    ActorFontColor black
+}
+
+skinparam Arrow {
+    FontColor black
+}
+
+skinparam state {
+    AttributeFontSize 12
+    FontColor black
+    AttributeFontColor black
+    BackgroundColor #b3b2b2
+    BorderColor black
+}

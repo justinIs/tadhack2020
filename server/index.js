@@ -1,6 +1,7 @@
 const routes = require("./routes");
 const Hapi = require('@hapi/hapi');
 const RingCentralController = require('./controllers/ringCentralController')
+const Path = require('path')
 
 require('dotenv').config()
 
@@ -9,7 +10,25 @@ const logger = require('./util/logger').createLogger('main')
 const init = async () => {
     const server = Hapi.server({
         port: 3030,
-        host: 'localhost'
+        host: 'localhost',
+        routes: {
+            files: {
+                relativeTo: Path.join(__dirname, '../webApp/dist')
+            }
+        }
+    })
+
+    await server.register(require('@hapi/inert'))
+
+    server.route({
+        method: 'GET',
+        path: '/{param*}',
+        handler: {
+            directory: {
+                path: '.',
+                redirectToSlash: true
+            }
+        }
     })
 
     server.route(routes)

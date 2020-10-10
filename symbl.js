@@ -138,12 +138,12 @@ const createPstnConnection = async (phoneNumber) => {
 
         subscribeToConnection(sdk, connectionId)
 
-        // Stop call after 30 seconds to automatically.
+        // Stop call after 60 seconds to automatically.
         setTimeout(async () => {
             const connection = await sdk.stopEndpoint({connectionId});
             logger.log('Stopped the connection');
             logger.log('Conversation ID:', connection.conversationId);
-        }, 30000);
+        }, 60000);
     } catch (e) {
         logger.error('Could not start PSTN endpoint connection', e)
         throw new Error(e.message)
