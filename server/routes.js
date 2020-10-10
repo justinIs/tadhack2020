@@ -16,15 +16,15 @@ const debugLogRequest = (request, payload) => {
     logger.debug('request params', options)
 }
 
-routes.push({
-    method: 'GET',
-    path: '/',
-    handler: (request, h) => {
-        logger.info('GET /')
-        debugLogRequest(request)
-        return 'Hello World'
-    }
-})
+// routes.push({
+//     method: 'GET',
+//     path: '/',
+//     handler: (request, h) => {
+//         logger.info('GET /')
+//         debugLogRequest(request)
+//         return 'Hello World'
+//     }
+// })
 
 routes.push({
     method: 'POST',

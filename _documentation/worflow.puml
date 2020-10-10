@@ -1,11 +1,24 @@
 @startuml
 
-actor User
-participant Avaya
-participant Server
-participant Symbl
+!include ./styles.puml
 
-User -> Avaya : places call
-Avaya -> User : answer call, play prompt
+actor user as "User"
+participant avaya as "Avaya"
+participant server as "Server"
+participant symbl as "Symbl"
+
+user -> avaya : places call
+avaya -> server : webhook
+server -> avaya : inboundXML: start conference
+avaya -> user : answer call, play prompt
+avaya -> avaya : start conference
+avaya -> server : conference webhook
+server -> symbl : listen to conference
+avaya -> server : (symbl) member added
+server -> avaya : play audio to user
+avaya -> user : audio
+user -> avaya : <i>important text to parse</i>
+avaya -> symbl : ingest audio from call
+symbl -> server : call data
 
 @enduml
