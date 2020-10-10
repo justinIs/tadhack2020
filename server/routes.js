@@ -1,6 +1,7 @@
 const logger = require('./util/logger').createLogger('Route')
 const ringCentralController = require('./controllers/ringCentralController')
 const avayaController = require('./controllers/avayaController')
+const symblService = require('./services/symblService');
 
 const routes = []
 
@@ -50,7 +51,8 @@ routes.push({
         logger.info('POST /avaya/webhook')
         debugLogRequest(request, request.payload)
 
-        if (request.payload.CallStatus === 'in-progress' && request.payload.CallDuration === '0') {
+        if (request.payload.CallStatus === 'in-progress' && request.payload.CallDuration === '0' && request.payload.CallerName === process.env.RECIPIENT_PHONE) {
+            logger.info('Starting new conference')
             return avayaController.startConferenceCall()
         }
         return 'OK'
@@ -63,7 +65,9 @@ routes.push({
     handler: (request, h) => {
         logger.info('POST /avaya/webhook/call_end')
         debugLogRequest(request, request.payload)
-
+        symblService.getTranscript(transcript => {
+            logger.debug('Transcript:', transcript)
+        })
         return 'OK'
     }
 })

@@ -4,6 +4,8 @@ const logger = require('../util/logger').createLogger('SymblService')
 
 let isInitialized = false
 
+let conversationId;
+
 const initSdk = async () => {
     try {
         await symblAPi.initSdk()
@@ -21,9 +23,14 @@ const connectToPstn = async (pstnNumber) => {
         await initSdk()
     }
 
-    await symblAPi.createPstnConnection(pstnNumber)
+    conversationId = await symblAPi.createPstnConnection(pstnNumber)
+}
+
+const getTranscript = () => {
+    return symblAPi.getConversationTranscript(conversationId);
 }
 
 module.exports = {
-    connectToPstn
+    connectToPstn,
+    getTranscript
 }

@@ -16,6 +16,7 @@
     "@sipcentric/pbx-client": "^2.2.1",
     "dotenv": "^8.2.0",
     "inquirer": "^7.3.3",
+    "request": "^2.88.2",
     "symbl-node": "^1.0.10"
   }
 }
