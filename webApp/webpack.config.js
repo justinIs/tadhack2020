@@ -10,6 +10,7 @@ const BUILD_DIR = path.resolve(__dirname, 'dist');
 const APP_DIR = path.resolve(__dirname, 'src');
 
 module.exports = {
+    devtool: 'eval-source-map',
     entry: [
         APP_DIR + '/index.jsx'
     ],
@@ -44,7 +45,7 @@ module.exports = {
                 }
             ]
         }, {
-            test: /\.s(a|c)ss$/,
+            test: /\.(s(a|c)|c)ss$/,
             exclude: /\.module.(s(a|c)ss)$/,
             loader: [
                 isDevelopment ? 'style-loader' : MiniCssExtractPlugin.loader,
@@ -75,6 +76,5 @@ module.exports = {
     ],
     resolve: {
         extensions: ['.json', '.js', '.jsx', '.css', '.scss']
-    },
-    devtool: 'inline-source-map'
+    }
 };

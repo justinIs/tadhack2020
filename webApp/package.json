@@ -19,6 +19,7 @@
     "babel-jest": "^26.0.1",
     "babel-loader": "^8.1.0",
     "babel-plugin-inferno": "^6.1.0",
+    "bootstrap": "^4.5.2",
     "bootstrap-loader": "^3.0.4",
     "bootstrap-sass": "^3.4.1",
     "css-loader": "^3.5.2",

@@ -1,6 +1,8 @@
 const logger = require('./util/logger').createLogger('Route')
 const ringCentralController = require('./controllers/ringCentralController')
 const avayaController = require('./controllers/avayaController')
+const Boom = require('@hapi/boom')
+const { isPhoneNumberValid } = require('./util/phonenumber')
 
 const routes = []
 
@@ -16,15 +18,27 @@ const debugLogRequest = (request, payload) => {
     logger.debug('request params', options)
 }
 
-// routes.push({
-//     method: 'GET',
-//     path: '/',
-//     handler: (request, h) => {
-//         logger.info('GET /')
-//         debugLogRequest(request)
-//         return 'Hello World'
-//     }
-// })
+// APIs for Client
+
+routes.push({
+    method: 'POST',
+    path: '/api/placeCall',
+    handler: async (request, h) => {
+        logger.info('POST /api/placeCall')
+        debugLogRequest(request, request.payload)
+
+        const { phone_number } = request.payload
+        if (!isPhoneNumberValid(phone_number)) {
+            throw Boom.badRequest('Invalid phone number: ' + phone_number)
+        }
+
+        await avayaController.placeOutboundSymblCall(phone_number)
+
+        return 'OK'
+    }
+})
+
+// RingCentral WebHooks
 
 routes.push({
     method: 'POST',
@@ -42,6 +56,8 @@ routes.push({
         return response
     }
 })
+
+// AVAYA WebHooks
 
 routes.push({
     method: 'POST',
@@ -84,7 +100,6 @@ routes.push({
         return 'OK'
     }
 })
-
 
 routes.push({
     method: 'POST',
