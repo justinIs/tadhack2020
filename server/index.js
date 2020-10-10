@@ -15,8 +15,15 @@ const init = async () => {
     server.route(routes)
 
     await server.start()
-    server.events.on('response', function (request) {
-      logger.info(request.info.remoteAddress + ': ' + request.method.toUpperCase() + ' ' + request.path + ' --> ' + request.response.statusCode)
+    server.events.on('response', (request) => {
+        const logLine = request.info.remoteAddress + ': ' + request.method.toUpperCase() + ' ' + request.path + ' --> ' + request.response.statusCode
+
+        let logObject
+        if (request.response._payload && request.response._payload._data) {
+            logObject = { payload: request.response._payload._data }
+        }
+
+        logger.info(logLine, logObject)
     })
 
     logger.log('Server running on %s', server.info.uri)

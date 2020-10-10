@@ -51,8 +51,19 @@ routes.push({
         debugLogRequest(request, request.payload)
 
         if (request.payload.CallStatus === 'in-progress' && request.payload.CallDuration === '0') {
-            return avayaController.answerWithSampleText()
+            return avayaController.joinConferenceForSymbl()
         }
+        return 'OK'
+    }
+})
+
+routes.push({
+    method: 'POST',
+    path: '/avaya/webhook/call_end',
+    handler: (request, h) => {
+        logger.info('POST /avaya/webhook/call_end')
+        debugLogRequest(request, request.payload)
+
         return 'OK'
     }
 })
@@ -64,9 +75,6 @@ routes.push({
         logger.info('POST /avaya/webhook/conference')
         debugLogRequest(request, request.payload)
 
-        if (request.payload.CallStatus === 'in-progress' && request.payload.CallDuration === '0') {
-            return avayaController.answerWithSampleText()
-        }
         return 'OK'
     }
 })

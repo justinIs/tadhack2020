@@ -38,14 +38,22 @@ const joinConferenceForSymbl = async () => {
                         callbackUrl: `${config.hostEndpoint}/avaya/webhook/conference`,
                         hangupOnStar: true,
                         maxParticipants: 3,
-                        beep: true
+                        beep: true,
+                        name: 'CPaaSExampleChat'
                     })
                 ]
             })
         ]
     })
+
+    try {
+        return await ix.build(xmlDefinition)
+    } catch (e) {
+        logger.error('Unable to build XML for joinConferenceForSymbl')
+    }
 }
 
 module.exports = {
-    answerWithSampleText
+    answerWithSampleText,
+    joinConferenceForSymbl
 }
