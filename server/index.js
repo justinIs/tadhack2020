@@ -35,12 +35,12 @@ process.on('unhandledRejection', (err) => {
         logger.error(`Could not init server: ${e.message}`, e)
     }
 
-    try {
-        logger.debug('registering inbound SMS now')
-        await RingCentralController.registerInboundSMS()
-    } catch(e) {
-        logger.error(`Could not register for inbound SMS ${e.message}`, e)
-    }
-
-    await RingCentralController.placeOutboundCall()
+    // try {
+    //     logger.debug('registering inbound SMS now')
+    //     await RingCentralController.registerInboundSMS()
+    // } catch(e) {
+    //     logger.error(`Could not register for inbound SMS ${e.message}`, e)
+    // }
+    //
+    // await RingCentralController.placeOutboundCall()
 })()

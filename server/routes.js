@@ -1,5 +1,6 @@
 const logger = require('./util/logger').createLogger('Route')
 const ringCentralController = require('./controllers/ringCentralController')
+const avayaController = require('./controllers/avayaController')
 
 const routes = []
 
@@ -39,6 +40,46 @@ routes.push({
             response.header('Validation-Token', request.headers['validation-token'])
         }
         return response
+    }
+})
+
+routes.push({
+    method: 'POST',
+    path: '/avaya/webhook',
+    handler: (request, h) => {
+        logger.info('POST /avaya/webhook')
+        debugLogRequest(request, request.payload)
+
+        if (request.payload.CallStatus === 'in-progress' && request.payload.CallDuration === '0') {
+            return avayaController.answerWithSampleText()
+        }
+        return 'OK'
+    }
+})
+
+routes.push({
+    method: 'POST',
+    path: '/avaya/webhook/conference',
+    handler: (request, h) => {
+        logger.info('POST /avaya/webhook/conference')
+        debugLogRequest(request, request.payload)
+
+        if (request.payload.CallStatus === 'in-progress' && request.payload.CallDuration === '0') {
+            return avayaController.answerWithSampleText()
+        }
+        return 'OK'
+    }
+})
+
+
+routes.push({
+    method: 'POST',
+    path: '/avaya/webhook/sms',
+    handler: (request, h) => {
+        logger.info('POST /avaya/webhook/sms')
+        debugLogRequest(request, request.payload)
+
+        return 'OK'
     }
 })
 

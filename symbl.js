@@ -11,7 +11,7 @@ const subscribeToConnection = (sdk, connectionId) => {
                 const {payload} = data;
 
                 // You get live transcription here!!
-                process.stdout.write('Live: ' + payload && payload.content + '\r');
+                logger.log('Live: ' + payload && payload.content + '\r');
                 break;
             }
             case 'message_response': {
@@ -19,7 +19,7 @@ const subscribeToConnection = (sdk, connectionId) => {
 
                 // You get processed messages in the transcript here!!! Real-time but not live! :)
                 messages.forEach(message => {
-                    process.stdout.write('Message: ' + message.payload.content + '\n');
+                    logger.log('Message: ' + message.payload.content + '\n');
                 });
                 break;
             }
@@ -27,7 +27,7 @@ const subscribeToConnection = (sdk, connectionId) => {
                 const {insights} = data;
                 // You get any insights here!!!
                 insights.forEach(insight => {
-                    process.stdout.write(`Insight: ${insight.type} - ${insight.text} \n\n`);
+                    logger.log(`Insight: ${insight.type} - ${insight.text} \n\n`);
                 });
                 break;
             }
