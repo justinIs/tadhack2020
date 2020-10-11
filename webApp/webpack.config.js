@@ -11,6 +11,7 @@ const APP_DIR = path.resolve(__dirname, 'src');
 
 module.exports = {
     devtool: 'eval-source-map',
+    target: 'web',
     entry: [
         APP_DIR + '/index.jsx'
     ],

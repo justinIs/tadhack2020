@@ -1,3 +1,4 @@
+const callLogsRepository = require('../repository/callLogs')
 const config = require('../util/config')
 const symblService = require('../services/symblService')
 const cpaas = require('@avaya/cpaas')
@@ -29,7 +30,7 @@ const startConferenceCall = async () => {
     const xmlDefinition = ix.response({
         content: [
             ix.say({
-                language:enums.Language.EN,
+                language: enums.Language.EN,
                 text: 'Welcome to our AI voice service, please wait while we connect the AI to your call',
                 voice: enums.Voice.FEMALE
             }),
@@ -55,16 +56,25 @@ const startConferenceCall = async () => {
 }
 
 const joinSymblToConference = async () => {
+    // sleep for conference to start up good
+    await new Promise(resolve => setTimeout(resolve, 2000))
+
     await symblService.connectToPstn(process.env.AVAYA_USERNAME)
 }
 
 const placeOutboundSymblCall = async (phoneNumber) => {
-    await symblService.connectToPstn(phoneNumber)
+    // Save insights from outbound symbl call
+    await symblService.connectToPstn(
+        phoneNumber,
+        ({insights, transcript}) => callLogsRepository.saveCallLog(phoneNumber, insights, transcript))
 }
+
+const getCallLogs = () => callLogsRepository.getCallLogs()
 
 module.exports = {
     answerWithSampleText,
     startConferenceCall,
     joinSymblToConference,
-    placeOutboundSymblCall
+    placeOutboundSymblCall,
+    getCallLogs
 }

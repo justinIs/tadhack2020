@@ -16,14 +16,14 @@ const initSdk = async () => {
     }
 }
 
-const connectToPstn = async (pstnNumber) => {
+const connectToPstn = async (pstnNumber, callLogCallback) => {
     logger.debug(`connectToPstn() called with pstnNumber: ${pstnNumber}`)
 
     if (!isInitialized) {
         await initSdk()
     }
 
-    conversationId = await symblAPi.createPstnConnection(pstnNumber)
+    conversationId = await symblAPi.createPstnConnection(pstnNumber, callLogCallback)
 }
 
 const getTranscript = () => {

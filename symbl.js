@@ -3,7 +3,7 @@ const request = require("request");
 const logger = require('./server/util/logger').createLogger('symbl')
 let symblAccessToken;
 
-const subscribeToConnection = (sdk, connectionId) => {
+const subscribeToConnection = (sdk, connectionId, onInsightResponse) => {
     sdk.subscribeToConnection(connectionId, data => {
         logger.log('Subscription received data: ', JSON.stringify(data))
 
@@ -30,7 +30,11 @@ const subscribeToConnection = (sdk, connectionId) => {
                 // You get any insights here!!!
                 insights.forEach(insight => {
                     logger.log(`Insight: ${insight.type} - ${insight.text} \n\n`);
+                    if (typeof onInsightResponse === 'function') {
+                        onInsightResponse(insight)
+                    }
                 });
+
                 break;
             }
             default: {
@@ -41,7 +45,7 @@ const subscribeToConnection = (sdk, connectionId) => {
     })
 }
 
-const createConnection = async (sdk) => {
+const createConnection = async (sdk, onConnectionClosed) => {
     try {
         const connection = await sdk.startEndpoint({
             endpoint: {
@@ -73,18 +77,23 @@ const createConnection = async (sdk) => {
           },
         )
 
-        subscribeToConnection(sdk, connectionId)
+        const insights = []
+        subscribeToConnection(sdk, connectionId, insight => {
+            insights.push(insight)
+        })
 
-        // Stop call after 60 seconds to automatically.
+        // Stop call after 60 seconds automatically
         setTimeout(async () => {
             const connection = await sdk.stopEndpoint({connectionId});
             logger.log('Stopped the connection');
             logger.log('Conversation ID:', connection.conversationId);
-            setTimeout(() => {
-              getConversationTranscript(connection.conversationId).then(transcript => {
+
+            getConversationTranscript(connection.conversationId).then(transcript => {
                 console.log(transcript);
-              });
-            }, 5000)
+                if (typeof onConnectionClosed === 'function') {
+                    onConnectionClosed(insights)
+                }
+            });
         }, 20000);
     } catch (e) {
         logger.error('Could not start endpoint')
@@ -97,10 +106,16 @@ const initSdk = async () => {
         "appSecret": process.env.SYMBL_APP_SECRET
     })
 
-    setAccessToken();
+    await setAccessToken();
 }
 
-const createPstnConnection = async (phoneNumber) => {
+/**
+ * Symbl call to PSTN destination
+ * @param phoneNumber
+ * @param callLogCallback - invoked with array of insights and transcript when call ends
+ * @return {Promise<*>}
+ */
+const createPstnConnection = async (phoneNumber, callLogCallback) => {
     logger.debug('Create ptsn connection')
     let connectionId, conversationId;
     try {
@@ -136,13 +151,22 @@ const createPstnConnection = async (phoneNumber) => {
           },
         )
 
-        subscribeToConnection(sdk, connectionId)
+        const insights = []
+        subscribeToConnection(sdk, connectionId, insight => {
+            insights.push(insight)
+        })
 
         // Stop call after 60 seconds to automatically.
         setTimeout(async () => {
             const connection = await sdk.stopEndpoint({connectionId});
-            logger.log('Stopped the connection');
-            logger.log('Conversation ID:', connection.conversationId);
+
+            const transcript = await getConversationTranscript(connection.conversationId)
+
+            logger.log('Stopped the connection', {insights, transcript, conversationId: connection.conversationId});
+
+            if (typeof callLogCallback === 'function') {
+                callLogCallback({insights, transcript})
+            }
         }, 60000);
     } catch (e) {
         logger.error('Could not start PSTN endpoint connection', e)
@@ -153,7 +177,7 @@ const createPstnConnection = async (phoneNumber) => {
 }
 
 const setAccessToken =  () => {
-    var options = { method: 'POST',
+    const options = { method: 'POST',
         url: 'https://api.symbl.ai/oauth2/token:generate',
         headers:
           { 'Postman-Token': '8450901c-80ae-425f-a6a9-ba2414018e20',
@@ -165,13 +189,18 @@ const setAccessToken =  () => {
               appSecret: process.env.SYMBL_APP_SECRET },
         json: true };
 
-    request(options, function (error, response, body) {
-        if (error) throw new Error(error);
-        symblAccessToken = body.accessToken;
-    });
+    return new Promise(resolve => {
+        request(options, function (error, response, body) {
+            if (error) throw new Error(error);
+            symblAccessToken = body.accessToken;
+            resolve()
+        });
+    })
 }
 
 const getConversationTranscript = (conversationId) => {
+    logger.debug(`getConversationTranscript(): conversationId = "${conversationId}"`)
+
     return new Promise(resolve => {
         const options = { method: 'GET',
             url: `https://api.symbl.ai/v1/conversations/${conversationId}/messages`,
@@ -183,7 +212,7 @@ const getConversationTranscript = (conversationId) => {
         request(options, function (error, response, body) {
             if (error) throw new Error(error);
             body = JSON.parse(body);
-            console.log('Bodyy', body);
+            logger.info('Body', body);
 
             let transcript = '';
             if (body.messages) {
@@ -192,7 +221,7 @@ const getConversationTranscript = (conversationId) => {
                     transcript += message.text;
                 });
             }
-            resolve(transcript);
+            resolve({transcript, messages: body.messages});
         });
     });
 }
@@ -228,10 +257,12 @@ if (require.main === module) {
             "appSecret": process.env.SYMBL_APP_SECRET
         })
 
-        setAccessToken();
+        await setAccessToken();
 
         logger.log('SDK initialized')
 
-        await createConnection(sdk)
+        await createConnection(sdk, (insights) => {
+            logger.info('connection now closed', { insights })
+        })
     })()
 }

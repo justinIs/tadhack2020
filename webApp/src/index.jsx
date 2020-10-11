@@ -9,6 +9,8 @@ import {
     Button,
     Table
 } from 'react-bootstrap'
+import Home from './Home'
+import Phone from './Phone'
 import './global'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -17,28 +19,30 @@ class App extends React.Component {
         super(props);
 
         this.state = {
-            recipientPhoneNumber: ''
+            callLogs: []
         }
     }
 
-    handleRecipientNumberChange(event) {
+    async componentDidMount() {
+        const response = await fetch('/api/callLogs')
+        const json = await response.json()
         this.setState({
-            recipientPhoneNumber: event.target.value
-        })
-    }
-
-    async requestPhoneCall() {
-        console.log(this.state.recipientPhoneNumber)
-        const response = await fetch('/api/placeCall', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({
-                phone_number: this.state.recipientPhoneNumber
-            })
+            callLogs: json.callLogs
         })
     }
 
     render() {
+        const usePhone = window.location.search.indexOf('phone=true') >= 0
+
+        const callLogs = this.state.callLogs.map(callLog =>
+            <tr>
+                <td>{callLog.phoneNumber}</td>
+                <td>{callLog.insights}</td>
+                <td>{callLog.transcript.transcript}</td>
+            </tr>
+        )
+
+        //usePhone ? <Phone /> : <Home />
         return (
             <Container className="text-center">
                 <Row>
@@ -77,6 +81,7 @@ class App extends React.Component {
                             <td>Hi I'm calling into ask if you can just do the dishes</td>
                             <td>https://webrtcventures.azurewebsites.net/?groupId=366d1c40-0b58-11eb-b807-d1243be537363das</td>
                         </tr>
+                        {callLogs}
                         </tbody>
                     </Table>
                 </Row>

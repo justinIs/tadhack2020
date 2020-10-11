@@ -39,6 +39,19 @@ routes.push({
     }
 })
 
+routes.push({
+    method: 'GET',
+    path: '/api/callLogs',
+    handler: (request, h) => {
+        logger.info('GET /api/callLogs')
+        debugLogRequest(request)
+
+        return h.response({
+            callLogs: avayaController.getCallLogs()
+        })
+    }
+})
+
 // RingCentral WebHooks
 
 routes.push({
@@ -81,6 +94,8 @@ routes.push({
     handler: (request, h) => {
         logger.info('POST /avaya/webhook/call_end')
         debugLogRequest(request, request.payload)
+
+        // if (request.payload.)
         symblService.getTranscript(transcript => {
             logger.debug('Transcript:', transcript)
         })
