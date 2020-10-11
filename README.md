@@ -2,7 +2,7 @@
 
 ## Setup
 
-Configure `.enf` file as follows:
+Configure `.env` file as follows:
 
 ```.env
 # Misc
