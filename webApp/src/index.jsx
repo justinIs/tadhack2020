@@ -9,8 +9,6 @@ import {
     Button,
     Table
 } from 'react-bootstrap'
-import Home from './Home'
-import Phone from './Phone'
 import './global'
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -32,8 +30,6 @@ class App extends React.Component {
     }
 
     render() {
-        const usePhone = window.location.search.indexOf('phone=true') >= 0
-
         const callLogs = this.state.callLogs.map(callLog =>
             <tr>
                 <td>{callLog.phoneNumber}</td>
@@ -41,8 +37,6 @@ class App extends React.Component {
                 <td>{callLog.transcript.transcript}</td>
             </tr>
         )
-
-        //usePhone ? <Phone /> : <Home />
         return (
             <Container className="text-center">
                 <Row>
