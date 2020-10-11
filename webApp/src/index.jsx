@@ -89,13 +89,6 @@ class App extends React.Component {
                         </tr>
                         </thead>
                         <tbody>
-                        <tr>
-                            <td>{ (new Date()).toISOString() }</td>
-                            <td>+16306772468</td>
-                            <td>Do the Dishes</td>
-                            <td>Hi I'm calling into ask if you can just do the dishes</td>
-                            <td>https://webrtcventures.azurewebsites.net/?groupId=366d1c40-0b58-11eb-b807-d1243be537363das</td>
-                        </tr>
                         {callLogs}
                         </tbody>
                     </Table>
