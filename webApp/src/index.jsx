@@ -29,12 +29,30 @@ class App extends React.Component {
         })
     }
 
+    handleRecipientNumberChange(event) {
+        this.setState({
+            recipientPhoneNumber: event.target.value
+        })
+    }
+
+    async requestPhoneCall() {
+        console.log(this.state.recipientPhoneNumber)
+        const response = await fetch('/api/placeCall', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                phone_number: this.state.recipientPhoneNumber
+            })
+        })
+    }
+
     render() {
         const callLogs = this.state.callLogs.map(callLog =>
             <tr>
                 <td>{callLog.phoneNumber}</td>
                 <td>{callLog.insights}</td>
                 <td>{callLog.transcript.transcript}</td>
+                <td>{callLog.meetingLink}</td>
             </tr>
         )
         return (
@@ -42,22 +60,22 @@ class App extends React.Component {
                 <Row>
                     <Col><h1>Missed Calls</h1></Col>
                 </Row>
-                {/*<Row className="justify-content-center">*/}
-                {/*    <Col md="auto">*/}
-                {/*        <InputGroup>*/}
-                {/*            <FormControl*/}
-                {/*                placeholder="Recipient's Phone Number"*/}
-                {/*                id="recipientPhoneNumber"*/}
-                {/*                type="tel"*/}
-                {/*                value={this.state.recipientPhoneNumber}*/}
-                {/*                onChange={event => this.handleRecipientNumberChange(event)}*/}
-                {/*            />*/}
-                {/*        </InputGroup>*/}
-                {/*    </Col>*/}
-                {/*    <Col md="auto">*/}
-                {/*        <Button onClick={() => this.requestPhoneCall()}>Submit</Button>*/}
-                {/*    </Col>*/}
-                {/*</Row>*/}
+                <Row className="justify-content-center">
+                    <Col md="auto">
+                        <InputGroup>
+                            <FormControl
+                                placeholder="Recipient's Phone Number"
+                                id="recipientPhoneNumber"
+                                type="tel"
+                                value={this.state.recipientPhoneNumber}
+                                onChange={event => this.handleRecipientNumberChange(event)}
+                            />
+                        </InputGroup>
+                    </Col>
+                    <Col md="auto">
+                        <Button onClick={() => this.requestPhoneCall()}>Submit</Button>
+                    </Col>
+                </Row>
                 <Row className="justify-content-center">
                     <Table striped bordered hover>
                         <thead>

@@ -1,3 +1,4 @@
+const createGUID = require('uuid').v1;
 const callLogs = []
 
 const getCallLogs = () => callLogs
@@ -6,7 +7,8 @@ const saveCallLog = (phoneNumber, insights, transcript) => {
         time: Date.now(),
         phoneNumber,
         insights,
-        transcript
+        transcript,
+        meetingLink: `https://webrtcventures.azurewebsites.net/?groupId=${createGUID()}`
     })
 }
 

@@ -151,21 +151,21 @@ const createPstnConnection = async (phoneNumber, callLogCallback) => {
           },
         )
 
-        const insights = []
         subscribeToConnection(sdk, connectionId, insight => {
-            insights.push(insight)
         })
 
         // Stop call after 60 seconds to automatically.
         setTimeout(async () => {
             const connection = await sdk.stopEndpoint({connectionId});
 
-            const transcript = await getConversationTranscript(connection.conversationId)
+            const transcript = await getConversationTranscript(connection.conversationId);
+            const insights = (await getInsights(connection.conversationId)).insights;
+            const concatInsights = insights.map(insight => insight.text);
 
-            logger.log('Stopped the connection', {insights, transcript, conversationId: connection.conversationId});
+            logger.log('Stopped the connection', {insights: concatInsights, transcript, conversationId: connection.conversationId});
 
             if (typeof callLogCallback === 'function') {
-                callLogCallback({insights, transcript})
+                callLogCallback({insights: concatInsights, transcript})
             }
         }, 60000);
     } catch (e) {
@@ -226,7 +226,7 @@ const getConversationTranscript = (conversationId) => {
     });
 }
 
-const getInsights = () => {
+const getInsights = (conversationId) => {
     return new Promise(resolve => {
         const options = { method: 'GET',
             url: `https://api.symbl.ai/v1/conversations/${conversationId}/insights`,
