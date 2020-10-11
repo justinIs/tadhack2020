@@ -51,8 +51,26 @@ const terminateConferences = async () => {
     }
 }
 
+const sendSms = async (destination, body) => {
+    try {
+        const SmsConnector = new cpaas.SmsConnector({
+            accountSid: process.env.AVAYA_SID,
+            authToken: process.env.AVAYA_AUTH_TOKEN
+        });
+
+        await SmsConnector.sendSmsMessage({
+            from: process.env.AVAYA_USERNAME,
+            to: destination,
+            body
+        })
+    } catch (e) {
+        logger.error('Could not send sms message', e)
+    }
+}
+
 module.exports = {
-    terminateConferences
+    terminateConferences,
+    sendSms
 }
 
 if (require.main === module) {

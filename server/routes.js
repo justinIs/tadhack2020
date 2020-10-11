@@ -44,10 +44,12 @@ routes.push({
     method: 'POST',
     path: '/callData',
     handler: async (request, h) => {
-        logger.info('POST /api/placeCall')
+        logger.info('POST /callData')
         debugLogRequest(request, request.payload)
         const { insights, transcript } = request.payload;
-        callLogsRepository.saveCallLog('+16306772468', insights, transcript);
+        const callLog = callLogsRepository.saveCallLog(process.env.RECIPIENT_PHONE, insights, transcript);
+        avayaController.sendSms(process.env.RECIPIENT_PHONE, 'Sorry I missed your call. let\'s have a video call later\n' + callLog.meetingLink)
+
         return 'OK'
     }
 })

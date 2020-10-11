@@ -49,6 +49,7 @@ class App extends React.Component {
     render() {
         const callLogs = this.state.callLogs.map(callLog =>
             <tr>
+                <td>{(new Date(callLog.time)).toISOString()}</td>
                 <td>{callLog.phoneNumber}</td>
                 <td>{callLog.insights}</td>
                 <td>{callLog.transcript.transcript}</td>
@@ -80,6 +81,7 @@ class App extends React.Component {
                     <Table striped bordered hover>
                         <thead>
                         <tr>
+                            <th>Date</th>
                             <th>Phone Number</th>
                             <th>Actions</th>
                             <th>Transcript</th>
@@ -88,6 +90,7 @@ class App extends React.Component {
                         </thead>
                         <tbody>
                         <tr>
+                            <td>{ (new Date()).toISOString() }</td>
                             <td>+16306772468</td>
                             <td>Do the Dishes</td>
                             <td>Hi I'm calling into ask if you can just do the dishes</td>

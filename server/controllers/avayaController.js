@@ -100,6 +100,8 @@ const placeOutboundSymblCall = async (phoneNumber) => {
 
 const getCallLogs = () => callLogsRepository.getCallLogs()
 
+const sendSms = (destination, body) => avayaApi.sendSms(destination, body)
+
 module.exports = {
     answerWithSampleText,
     sayLotsOfText,
@@ -107,5 +109,6 @@ module.exports = {
     terminateConference,
     joinSymblToConference,
     placeOutboundSymblCall,
-    getCallLogs
+    getCallLogs,
+    sendSms
 }
