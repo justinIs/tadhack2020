@@ -154,8 +154,10 @@ const createPstnConnection = async (phoneNumber, callLogCallback) => {
         subscribeToConnection(sdk, connectionId, insight => {
         })
 
-        // Stop call after 60 seconds to automatically.
+        // Stop call after 30 seconds automatically
         setTimeout(async () => {
+            logger.info('Stopping symbl call')
+
             const connection = await sdk.stopEndpoint({connectionId});
 
             const transcript = await getConversationTranscript(connection.conversationId);
@@ -167,7 +169,7 @@ const createPstnConnection = async (phoneNumber, callLogCallback) => {
             if (typeof callLogCallback === 'function') {
                 callLogCallback({insights: concatInsights, transcript})
             }
-        }, 60000);
+        }, 30000);
     } catch (e) {
         logger.error('Could not start PSTN endpoint connection', e)
         throw new Error(e.message)

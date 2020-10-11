@@ -80,7 +80,10 @@ routes.push({
         logger.info('POST /avaya/webhook')
         debugLogRequest(request, request.payload)
 
-        if (request.payload.CallStatus === 'in-progress' && request.payload.CallDuration === '0' && request.payload.CallerName === process.env.RECIPIENT_PHONE) {
+        if (request.payload.CallerName === '+12015947998') {
+            return avayaController.startConferenceCall(true)
+        }
+        if (request.payload.CallStatus === 'in-progress') {
             logger.info('Starting new conference')
             return avayaController.startConferenceCall()
         }
@@ -91,14 +94,20 @@ routes.push({
 routes.push({
     method: 'POST',
     path: '/avaya/webhook/call_end',
-    handler: (request, h) => {
+    handler: async (request, h) => {
         logger.info('POST /avaya/webhook/call_end')
         debugLogRequest(request, request.payload)
 
-        // if (request.payload.)
-        symblService.getTranscript(transcript => {
-            logger.debug('Transcript:', transcript)
-        })
+        // env variable needs to be the same as the number calling from for the conference to trigger this
+        // when person calling for the conference ends the call, terminate the other leg
+        if (request.payload.From === process.env.RECIPIENT_PHONE) {
+            await avayaController.terminateConference()
+        } else {
+            await symblService.getTranscript(transcript => {
+                logger.debug('Transcript:', transcript)
+            })
+        }
+
         return 'OK'
     }
 })
