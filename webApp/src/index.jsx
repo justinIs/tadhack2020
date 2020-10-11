@@ -6,7 +6,8 @@ import {
     Col,
     InputGroup,
     FormControl,
-    Button
+    Button,
+    Table
 } from 'react-bootstrap'
 import './global'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -41,23 +42,43 @@ class App extends React.Component {
         return (
             <Container className="text-center">
                 <Row>
-                    <Col><h1>Hello World from React</h1></Col>
+                    <Col><h1>Missed Calls</h1></Col>
                 </Row>
+                {/*<Row className="justify-content-center">*/}
+                {/*    <Col md="auto">*/}
+                {/*        <InputGroup>*/}
+                {/*            <FormControl*/}
+                {/*                placeholder="Recipient's Phone Number"*/}
+                {/*                id="recipientPhoneNumber"*/}
+                {/*                type="tel"*/}
+                {/*                value={this.state.recipientPhoneNumber}*/}
+                {/*                onChange={event => this.handleRecipientNumberChange(event)}*/}
+                {/*            />*/}
+                {/*        </InputGroup>*/}
+                {/*    </Col>*/}
+                {/*    <Col md="auto">*/}
+                {/*        <Button onClick={() => this.requestPhoneCall()}>Submit</Button>*/}
+                {/*    </Col>*/}
+                {/*</Row>*/}
                 <Row className="justify-content-center">
-                    <Col md="auto">
-                        <InputGroup>
-                            <FormControl
-                                placeholder="Recipient's Phone Number"
-                                id="recipientPhoneNumber"
-                                type="tel"
-                                value={this.state.recipientPhoneNumber}
-                                onChange={event => this.handleRecipientNumberChange(event)}
-                            />
-                        </InputGroup>
-                    </Col>
-                    <Col md="auto">
-                        <Button onClick={() => this.requestPhoneCall()}>Submit</Button>
-                    </Col>
+                    <Table striped bordered hover>
+                        <thead>
+                        <tr>
+                            <th>Phone Number</th>
+                            <th>Actions</th>
+                            <th>Transcript</th>
+                            <th>Meeting Link</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <td>+16306772468</td>
+                            <td>Do the Dishes</td>
+                            <td>Hi I'm calling into ask if you can just do the dishes</td>
+                            <td>https://webrtcventures.azurewebsites.net/?groupId=366d1c40-0b58-11eb-b807-d1243be537363das</td>
+                        </tr>
+                        </tbody>
+                    </Table>
                 </Row>
             </Container>
         );
