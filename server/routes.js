@@ -2,6 +2,7 @@ const logger = require('./util/logger').createLogger('Route')
 const ringCentralController = require('./controllers/ringCentralController')
 const avayaController = require('./controllers/avayaController')
 const symblService = require('./services/symblService');
+const callLogsRepository = require('./repository/callLogs')
 const Boom = require('@hapi/boom')
 const { isPhoneNumberValid } = require('./util/phonenumber')
 
@@ -35,6 +36,18 @@ routes.push({
 
         await avayaController.placeOutboundSymblCall(phone_number)
 
+        return 'OK'
+    }
+})
+
+routes.push({
+    method: 'POST',
+    path: '/callData',
+    handler: async (request, h) => {
+        logger.info('POST /api/placeCall')
+        debugLogRequest(request, request.payload)
+        const { insights, transcript } = request.payload;
+        callLogsRepository.saveCallLog('+16306772468', insights, transcript);
         return 'OK'
     }
 })

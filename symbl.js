@@ -115,7 +115,7 @@ const initSdk = async () => {
  * @param callLogCallback - invoked with array of insights and transcript when call ends
  * @return {Promise<*>}
  */
-const createPstnConnection = async (phoneNumber, callLogCallback) => {
+const createPstnConnection = async (phoneNumber) => {
     logger.debug('Create ptsn connection')
     let connectionId, conversationId;
     try {
@@ -160,15 +160,15 @@ const createPstnConnection = async (phoneNumber, callLogCallback) => {
 
             const connection = await sdk.stopEndpoint({connectionId});
 
-            const transcript = await getConversationTranscript(connection.conversationId);
-            const insights = (await getInsights(connection.conversationId)).insights;
-            const concatInsights = insights.map(insight => insight.text);
+            setTimeout(async () => {
+                const transcript = await getConversationTranscript(connection.conversationId);
+                const insights = (await getInsights(connection.conversationId)).insights;
+                const concatInsights = insights.map(insight => insight.text);
 
-            logger.log('Stopped the connection', {insights: concatInsights, transcript, conversationId: connection.conversationId});
+                logger.log('Stopped the connection', {insights: concatInsights, transcript, conversationId: connection.conversationId});
 
-            if (typeof callLogCallback === 'function') {
-                callLogCallback({insights: concatInsights, transcript})
-            }
+                await sendCallData({insights: concatInsights, transcript, phoneNumber});
+            }, 5000);
         }, 30000);
     } catch (e) {
         logger.error('Could not start PSTN endpoint connection', e)
@@ -224,6 +224,25 @@ const getConversationTranscript = (conversationId) => {
                 });
             }
             resolve({transcript, messages: body.messages});
+        });
+    });
+}
+
+const sendCallData = (data) => {
+    return new Promise(resolve => {
+        const options = { method: 'POST',
+            url: `${process.env.NGROK_ENDPOINT}/callData`,
+            headers:
+              { 'Postman-Token': 'b7ee1979-674d-4f29-baea-706363e21a6e',
+                  'cache-control': 'no-cache',
+                  'x-api-key': symblAccessToken },
+            body: data,
+            json: true
+        };
+
+        request(options, function (error, response, body) {
+            if (error) throw new Error(error);
+            resolve(body);
         });
     });
 }

@@ -94,8 +94,8 @@ const joinSymblToConference = async () => {
 const placeOutboundSymblCall = async (phoneNumber) => {
     // Save insights from outbound symbl call
     await symblService.connectToPstn(
-        phoneNumber,
-        ({insights, transcript}) => callLogsRepository.saveCallLog(phoneNumber, insights, transcript))
+        phoneNumber
+    )
 }
 
 const getCallLogs = () => callLogsRepository.getCallLogs()
